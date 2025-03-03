@@ -1,1 +1,7 @@
 .env
+airflow/dags/__pycache__/*
+airflow/logs/*
+airflow/plugins/*
+finance_data_pipeline/target/
+finance_data_pipeline/dbt_packages/
+finance_data_pipeline/logs/

@@ -30,27 +30,46 @@ services:
     volumes:
       - clickhouse_data:/var/lib/clickhouse
 
-#   airflow:
-#     image: apache/airflow:2.5.1
-#     container_name: airflow
-#     restart: always
-#     environment:
-#       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-#       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://user:password@postgres:5432/airflow
-#     ports:
-#       - "8080:8080"
-#     depends_on:
-#       - postgres
+  dbt:
+    image: grmv/dbt-clickhouse:1.8.6
+    container_name: dbt
+    command: [
+      "run",
+      "--profiles-dir",
+      "/root",
+      "--project-dir",
+      "/dbt"
+    ]
+    restart: always
+    environment: 
+      DBT_PROFILE: finance_data_pipeline
+      DBT_TARGET: dev
+    volumes:
+      - ./finance_data_pipeline:/dbt
+      - C:/Users/Jose Ramirez/.dbt:/root
+    depends_on:
+      - clickhouse
+      - postgres
 
-#   dbt:
-#     image: ghcr.io/dbt-labs/dbt-postgres:latest
-#     container_name: dbt
-#     restart: always
-#     volumes:
-#       - ./dbt_project:/usr/app/dbt_project
-#     depends_on:
-#       - clickhouse
-#       - postgres
+  airflow:
+    image: apache/airflow:2.7.0
+    container_name: airflow
+    restart: always
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${PG_USERNAME}:${PG_PASSWORD}@postgres:5432/${PG_DB}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/plugins:/opt/airflow/plugins
+    depends_on:
+      - postgres
+    command: >
+      bash -c "airflow db init &&
+               airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
+               airflow webserver & airflow scheduler"
 
 volumes:
   postgres_data:
