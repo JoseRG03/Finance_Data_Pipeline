@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: company_registry_stock_price
+    description: "Histórico acciones"
+    columns:
+      - name: open
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: close
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: volume
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0

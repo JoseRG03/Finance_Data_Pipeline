@@ -31,6 +31,7 @@ Este es un pipeline que gestiona datos de acciones con YFinance a través de los
 ![image](./assets/postgres-conn-2.png)
 6. Configurar Clickhouse como fuente destino ingresando los siguientes datos (igualmente basarse en los valores del .env para los accesos)
 ![image](./assets/clickhouse-conn-1.png)
-7. Crear la conexión entre ambas fuentes, marcando que se ejecute cada 24 horas y que el "Destination namespace" sea "Destination-defined". PostgreSQL será la fuente y Clickhouse el destino.
+7. Crear la conexión entre ambas fuentes, marcando que se ejecute cada 24 horas y que el "Destination namespace" sea "Destination-defined". PostgreSQL será la fuente y Clickhouse el destino. Una vez configurado, debería verse de la siguiente manera:
+![image](./assets/airbyte-connection.png)
 
 Una vez configurado, el DAG de Airflow ha sido programado para cargar data cada 24 horas, buscando nueva información de la bolsa de valores.

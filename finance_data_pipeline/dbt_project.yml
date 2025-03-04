@@ -31,5 +31,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   finance_data_pipeline:
+    validation:
+      +materialized: table
     example:
       +materialized: table

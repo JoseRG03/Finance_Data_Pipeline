@@ -8,10 +8,10 @@ from datetime import datetime, timedelta
 # Lista de bancos que cotizan en la bolsa de EE.UU.
 SYMBOLS = ["JPM", "BAC", "C", "WFC", "GS", "MS", "USB", "PNC", "TFC", "SCHW"]
 
-# Obtener el primer y último día del mes actual
-current_date = datetime.today().strftime('%Y-%m-%d')
-START_DATE = current_date
-END_DATE = current_date
+# Obtiene fecha de inicio y final del filtro (ayer y hoy)
+current_date = datetime.today()
+START_DATE = (current_date - timedelta(days=1)).strftime('%Y-%m-%d')
+END_DATE = current_date.strftime('%Y-%m-%d')
 
 # Retorna la información del Banco solicitado
 def get_bank_info(symbol):
