@@ -5,11 +5,15 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 
-# Constants
-SYMBOLS = ["AAPL", "GOOGL", "MSFT"]
-START_DATE = "2024-01-01"
-END_DATE = "2024-03-01"
+# Lista de bancos que cotizan en la bolsa de EE.UU.
+SYMBOLS = ["JPM", "BAC", "C", "WFC", "GS", "MS", "USB", "PNC", "TFC", "SCHW"]
 
+# Obtener el primer y último día del mes actual
+current_date = datetime.today().strftime('%Y-%m-%d')
+START_DATE = current_date
+END_DATE = current_date
+
+# Retorna la información del Banco solicitado
 def get_bank_info(symbol):
     stock = yf.Ticker(symbol)
     info = stock.info
@@ -26,6 +30,7 @@ def get_bank_info(symbol):
         "address": info.get("address1", "N/A")
     }
 
+# Retorna la información de las acciones de la fecha de hoy 
 def get_stock_data(symbol, start_date, end_date):
     stock = yf.Ticker(symbol)
     data = stock.history(start=start_date, end=end_date)
@@ -35,6 +40,7 @@ def get_stock_data(symbol, start_date, end_date):
     data.insert(0, 'symbol', symbol)
     return data
 
+# Obtiene los fundamentales del banco seleccionado
 def get_fundamentals(symbol):
     stock = yf.Ticker(symbol)
     balance = stock.balance_sheet
@@ -47,6 +53,7 @@ def get_fundamentals(symbol):
         "shares_issued": balance.loc["Ordinary Shares Number"].values[0] if "Ordinary Shares Number" in balance.index else 0
     }
 
+# Obtiene los tenedores del banco seleccionado
 def get_holders(symbol):
     stock = yf.Ticker(symbol)
     holders = stock.institutional_holders
@@ -56,6 +63,7 @@ def get_holders(symbol):
         return holders[["symbol", "date", "Holder", "Shares", "Value"]]
     return pd.DataFrame()
 
+# Inserta la data encontrada a la BD de Postgres
 def insert_data_into_postgres():
     pg_hook = PostgresHook(postgres_conn_id="finance_db")
     conn = pg_hook.get_conn()
